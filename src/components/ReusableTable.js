@@ -10,9 +10,11 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import TableSortLabel from '@mui/material/TableSortLabel';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
 
-const ReuseableTable = ({ columns, data }) => {
+const ReuseableTable = ({ columns, data, initialState}) => {
   const {
     getTableProps,
     getTableBodyProps,
@@ -22,11 +24,12 @@ const ReuseableTable = ({ columns, data }) => {
   } = useTable({
     columns,
     data,
+    initialState,
   },   useSortBy)
 
     {/* https://mui.com/components/tables/ */}
   return (
-   <TableContainer component={Paper} style={{marginTop: "5rem"}}>
+   <TableContainer component={Paper} >
 
     <Table {...getTableProps()}>
       <TableHead>
@@ -34,22 +37,14 @@ const ReuseableTable = ({ columns, data }) => {
           <TableRow {...headerGroup.getHeaderGroupProps()} key={i}>
             {headerGroup.headers.map((column, j) => (
               <TableCell key={j} {...column.getHeaderProps(column.getSortByToggleProps())} 
-              // sortDirection={column.isSorted ? : false}
+              sortDirection={column.isSorted ? (column.isSortedDesc ? 'desc': 'asc') : false}
               > 
               {column.render("Header")}
 
-              {/* { {column.isSorted && <TableSortLabel
-              // active={orderBy === headCell.id}
-              active={true}
-              direction={orderBy === headCell.id ? order : 'asc'}
-              // onClick={createSortHandler(headCell.id)}
-            >
-              {/* {headCell.label} */}
-                {/* <Box component="span" sx={visuallyHidden}>
-                  {order.isSortedDesc === true ? 'sorted descending' : 'sorted ascending'}
-                </Box>
-            </TableSortLabel>
-            }        */} 
+            <TableSortLabel
+              active={column.isSorted}
+              direction={column.isSortedDesc === true ? 'desc': 'asc'}
+            />
               
               
               </TableCell>

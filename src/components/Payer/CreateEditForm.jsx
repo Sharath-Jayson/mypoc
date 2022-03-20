@@ -1,45 +1,26 @@
 import React, { useState } from 'react';
 import { TheList } from '../../styles/styled-elements';
 import styled from 'styled-components';
+import TextField from "@material-ui/core/TextField";
+import Grid from "@material-ui/core/Grid";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import FormControl from "@material-ui/core/FormControl";
+import FormLabel from "@material-ui/core/FormLabel";
+import FormGroup from '@mui/material/FormGroup';
+import RadioGroup from "@material-ui/core/RadioGroup";
+import Checkbox from '@mui/material/Checkbox';
+import Radio from "@material-ui/core/Radio";
+import Select from "@material-ui/core/Select";
+import MenuItem from "@material-ui/core/MenuItem";
+import InputLabel from '@mui/material/InputLabel';
+import OutlinedInput from '@mui/material/OutlinedInput';
+import Slider from "@material-ui/core/Slider";
+import Button from "@material-ui/core/Button";
+import { Input } from '@material-ui/core';
+import Box from '@mui/material/Box';
 
-const PayerForm = styled.form`
-  display: flex;
-  flex-wrap: wrap;
-`;
-const PayerItem = styled.div`
-  width: 400px;
-  display: flex;
-  flex-direction: column;
-  margin-top: 10px;
-  margin-right: 20px;
-  label {
-    margin-bottom: 10px;
-    font-size: 14px;
-    font-weight: 600;
-    color: rgb(151, 150, 150);
-  }
-  input {
-    height: 20px;
-    padding: 10px;
-    border: 1px solid gray;
-    border-radius: 5px;
-  }
-  select {
-    height: 40px;
-    border-radius: 5px;
-  }
-`;
+
 const PayerRadioButton = styled.div`
-  input {
-    margin-top: 15px;
-  }
-  label {
-    margin: 10px;
-    font-size: 18px;
-    color: #555;
-  }
-`;
-const PayerCheckBox = styled.div`
   input {
     margin-top: 15px;
   }
@@ -61,13 +42,28 @@ const PayerCreateButton = styled.button`
   cursor: pointer;
 `;
 
+// https://mui.com/components/selects/#multiple-select
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250,
+    },
+  },
+};
+
+
+
+
 const CreateEditForm = (props) => {
   const [payerId, setPayerId] = useState(props.data.payerId || '');
   const [payerName, setPayerName] = useState(props.data.payerName || '');
   const [tradingPartnerId, setTradingPartnerId] = useState(props.data.tradingPartnerId || '');
   const [transactionTypes, setTransactionTypes] = useState(props.data.transactionTypes || []);
   const [isActive, setIsActive] = useState(
-    props.data.isActive === undefined ? true : props.data.active
+    props.data.isActive === undefined ? true : props.data.isActive
   );
   const [status, setStatus] = useState(props.data.status || 'dark');
 
@@ -79,18 +75,20 @@ const CreateEditForm = (props) => {
     setIsActive(true);
   };
 
-  const handleSelect = function (selectedItems) {
-    const selectedOptions = [];
-    for (let i = 0; i < selectedItems.length; i++) {
-      selectedOptions.push(selectedItems[i].value);
-    }
-    setTransactionTypes(selectedOptions);
-  };
-
   return (
-    <TheList>
+    <>
       <h1>{props.formTitle}</h1>
-      <PayerForm
+      {/* <Box sx={{
+        '& > :not(style)': { m: 1 },
+      }}> */}
+      <Box
+        component="form"
+        sx={{
+          '& .MuiTextField-root': { m: 1, width: '25ch' },
+          '& > :not(style)': { m: 1 },
+        }}
+        noValidate
+        autoComplete="off"
         onSubmit={(e) => {
           e.preventDefault();
 
@@ -119,36 +117,74 @@ const CreateEditForm = (props) => {
           if (props.onSubmit) {
             props.onSubmit();
           }
-        }}>
-        <PayerItem>
-          <label>Payer ID</label>
-          <input
-            type="text"
-            placeholder="john"
-            value={payerId}
-            onChange={(e) => setPayerId(e.target.value)}
-          />
-        </PayerItem>
-        <PayerItem>
-          <label>Payer Name</label>
-          <input
-            type="text"
-            placeholder="John Smith"
-            value={payerName}
-            onChange={(e) => setPayerName(e.target.value)}
-          />
-        </PayerItem>
-        <PayerItem>
-          <label>Trading Partner ID</label>
-          <input
-            type="text"
-            placeholder="ISDHdhd"
-            value={tradingPartnerId}
-            onChange={(e) => setTradingPartnerId(e.target.value)}
-          />
-        </PayerItem>
-        <PayerItem>
-          <label>Transaction Types</label>
+        }}
+      >
+        <FormGroup row>
+
+          <FormControl>
+
+            <TextField
+              label="Payer ID"
+              type="text"
+              variant="filled"
+              value={payerId}
+              onChange={(e) => setPayerId(e.target.value)}
+            />
+          </FormControl>
+
+          <FormControl>
+
+            <TextField
+              label="Name"
+              type="text"
+              variant="filled"
+              value={payerName}
+              onChange={(e) => setPayerName(e.target.value)}
+            />
+          </FormControl>
+
+          <FormControl>
+            <TextField
+              label="Partner ID"
+              type="text"
+              placeholder="Partner ID"
+              value={tradingPartnerId}
+              variant="filled"
+              onChange={(e) => setTradingPartnerId(e.target.value)}
+            />
+          </FormControl>
+        </FormGroup>
+
+
+        <FormGroup row>
+
+          <FormControl>
+
+            <InputLabel >Transaction Types (Multiple)</InputLabel>
+            <Select
+              labelId="demo-multiple-name-label"
+              multiple
+              value={transactionTypes}
+              input={<OutlinedInput label="Name" />}
+              MenuProps={MenuProps}
+              onChange={
+                (e) => {
+                  setTransactionTypes(e.target.value)
+                }
+              }
+            >
+              {['PAC', 'MAC', 'ELIG'].map((name) => (
+                <MenuItem
+                  key={name}
+                  value={name}
+                >
+                  {name}
+                </MenuItem>
+              ))}
+            </Select>
+
+          </FormControl>
+          {/* <label>Transaction Types</label>
 
           <select
             size="3"
@@ -164,57 +200,34 @@ const CreateEditForm = (props) => {
             <option value="pac">PAC</option>
             <option value="mac">MAC</option>
             <option value="elig">ELIG</option>
-          </select>
-        </PayerItem>
-        <PayerItem>
-          <label htmlFor="active"> Is Active</label>
-          <PayerCheckBox>
-            <input
-              type="checkbox"
-              name="status"
-              checked={isActive}
-              onClick={() => {
-                setIsActive(!isActive);
-              }}
-              readOnly
-            />
-          </PayerCheckBox>
-        </PayerItem>
+          </select> */}
 
-        <PayerItem>
-          <label>Status</label>
-          <PayerRadioButton>
-            <input
-              type="radio"
-              name="status"
-              id="dark"
-              checked={status === 'dark'}
-              value="dark"
-              onChange={() => {
-                setStatus('dark');
-              }}
-            />
-            <label htmlFor="Dark">Dark</label>
-            <input
-              type="radio"
-              name="status"
-              id="live"
-              value="live"
-              checked={status === 'live'}
-              onChange={() => {
-                setStatus('live');
-              }}
-            />
-            <label htmlFor="live">Live</label>
-          </PayerRadioButton>
-        </PayerItem>
 
-        {/* <PayerItem>
-          <PayerCheckBox>
-            <label htmlFor="active"> Status</label>
-            <input type="checkbox" id="active" name="status" value="active" />
-          </PayerCheckBox>
-        </PayerItem> */}
+          <FormControl component="fieldset" variant="standard">
+            <FormLabel component="legend">Active</FormLabel>
+            <FormControlLabel
+              control={<Checkbox checked={isActive} onChange={() => setIsActive(!isActive)} />} label="Is Active" />
+          </FormControl>
+
+          <FormControl>
+          </FormControl>
+
+
+          <FormControl>
+            <FormLabel>Status</FormLabel>
+            <RadioGroup
+              value={status}
+              onChange={(e) => { setStatus(e.target.value) }}
+            >
+              <FormControlLabel value="dark" control={<Radio />} label="Dark" />
+              <FormControlLabel value="live" control={<Radio />} label="Live" />
+            </RadioGroup>
+
+          </FormControl>
+
+
+        </FormGroup>
+
         <div>
           <PayerCreateButton type="submit">
             {props.mode === 'CREATE' && 'Create'}
@@ -222,8 +235,8 @@ const CreateEditForm = (props) => {
           </PayerCreateButton>
           <PayerCreateButton>Cancel</PayerCreateButton>
         </div>
-      </PayerForm>
-    </TheList>
+      </Box>
+    </>
   );
 };
 

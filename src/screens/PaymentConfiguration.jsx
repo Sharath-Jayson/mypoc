@@ -9,8 +9,8 @@ import { ItemAddButton } from '../styles/styled-elements';
 // import Popup from 'reactjs-popup';
 import Modal from 'react-modal';
 import ReusableTable from '../components/ReusableTable';
-import { EditOutline } from '@styled-icons/evaicons-outline/EditOutline';
-import { DeleteOutline } from '@material-ui/icons';
+// import { EditOutline } from '@styled-icons/evaicons-outline/EditOutline';
+// import { DeleteOutline } from '@material-ui/icons';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 
@@ -77,11 +77,15 @@ const PayerConfigurationScreen = (props) => {
     setupdatePayerPopupData(payerData);
   };
 
+  const deletePayer = () => [
+
+  ]
+
   const columns = useMemo(
     () => [
       {
         "Header": "Payer ID",
-        "accessor": "payerId"
+        "accessor": "payerId",
       },
       {
         "Header": "Payer Name",
@@ -100,8 +104,21 @@ const PayerConfigurationScreen = (props) => {
           return <span>{cellProps.value.join(', ')}</span>
         }
       },
-
-      // TODO other data
+      {
+        "Header": "Is Active",
+        "accessor": "isActive",
+        Cell: ({ cell: { value } }) => (
+          <input type="checkbox" disabled defaultChecked={value} />
+        )
+      },
+      {
+        "Header": "Status",
+        "accessor": "status"
+      },
+      {
+        "Header": "Updated On",
+        "accessor": "updatedOn"
+      },
       {
         "Header": "Edit",
         disableSortBy: true,
@@ -110,13 +127,12 @@ const PayerConfigurationScreen = (props) => {
           return <EditIcon onClick={() => updatePayerPopup(cellProps.row.values)} {...cellProps} />
         }
       },
-      // TODO delete
       {
         "Header": "Delete",
         disableSortBy: true,
         // cell props has access to row value
         Cell: (cellProps) => {
-          return <DeleteIcon />
+          return <DeleteIcon onClick={() => props.deletePayer({ payerId: cellProps.row.values.payerId })} />
         }
       }
 
@@ -213,7 +229,7 @@ const PayerConfigurationScreen = (props) => {
         </table>
       </Styles>
 
-      <ReusableTable columns={columns} data={props.payers} />
+      <ReusableTable columns={columns} data={props.payers} initialState={{ sortBy: [{ id: 'payerId', desc: false }] }} />
 
     </>
   );

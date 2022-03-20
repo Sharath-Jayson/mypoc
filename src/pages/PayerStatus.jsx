@@ -1,7 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import NavbarSidebar from '../layouts/NavbarSidebar';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
+import ReusableTable from '../components/ReusableTable';
 
 const PageContainer = styled.div`
     flex: 4;
@@ -44,7 +49,7 @@ const StyledTable = styled.table`
   }
 `;
 
-const Tab = styled.button`
+const MyTab = styled.button`
   font-size: 20px;
   padding: 10px 60px;
   cursor: pointer;
@@ -63,16 +68,59 @@ const ButtonGroup = styled.div`
   display: flex;
 `;
 
+
+// mui tabpanel
+const TabPanel = (props) => {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box sx={{ p: 3 }}>
+          <Typography>{children}</Typography>
+        </Box>
+      )}
+    </div>
+  );
+}
+
 const PayerStatus = (props) => {
   const activePayer = 'ACTIVE_PAYER';
   const inactivePayer = 'INACTIVE_PAYER';
 
   const [active, setActive] = useState(activePayer);
 
+  const [activeIndex, setActiveIndex] = useState(0)
+
+  const handleChangeTab = (event, newValue) => {
+    setActiveIndex(newValue);
+  }
+
   console.log(props);
 
   const activeData = props.payers.filter((p) => p.isActive);
   const inactiveData = props.payers.filter((p) => p.isActive === false);
+
+  const columns = useMemo(() => [
+    {
+      "Header": "Payer ID",
+      "accessor": "payerId"
+    },
+    {
+      "Header": "Payer Name",
+      "accessor": "payerName"
+    },
+    {
+      "Header": "Trading Partner ID",
+      "accessor": "tradingPartnerId"
+    }
+  ])
 
   console.log(activeData, inactiveData);
 
@@ -80,12 +128,12 @@ const PayerStatus = (props) => {
     <NavbarSidebar>
       <PageContainer>
         <ButtonGroup>
-          <Tab active={active == activePayer} onClick={() => setActive(activePayer)}>
+          <MyTab active={active == activePayer} onClick={() => setActive(activePayer)}>
             Active Payer
-          </Tab>
-          <Tab active={active == inactivePayer} onClick={() => setActive(inactivePayer)}>
+          </MyTab>
+          <MyTab active={active == inactivePayer} onClick={() => setActive(inactivePayer)}>
             Inactive Payer
-          </Tab>
+          </MyTab>
         </ButtonGroup>
 
         {active === activePayer && (
@@ -137,8 +185,27 @@ const PayerStatus = (props) => {
             </StyledTable>
           </>
         )}
+
+        <br />
+
+        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+          <Tabs value={activeIndex} onChange={handleChangeTab} textColor="secondary"
+            indicatorColor="secondary" variant="fullWidth"
+          >
+            <Tab label="Active Payer" />
+            <Tab label="Inactive Payer" />
+          </Tabs>
+        </Box>
+        <TabPanel value={activeIndex} index={0}>
+          <ReusableTable columns={columns} data={activeData} initialState={{ sortBy: [{ id: 'payerId', desc: false }] }} />
+        </TabPanel>
+        <TabPanel value={activeIndex} index={1}>
+          <ReusableTable columns={columns} data={inactiveData} initialState={{ sortBy: [{ id: 'payerId', desc: false }] }} />
+        </TabPanel>
+
+
       </PageContainer>
-    </NavbarSidebar>
+    </NavbarSidebar >
   );
 };
 
