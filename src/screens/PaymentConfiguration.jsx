@@ -14,8 +14,6 @@ import ReusableTable from '../components/ReusableTable';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-
-
 const modalCustomStyles = {
   content: {
     top: '50%',
@@ -72,77 +70,69 @@ const PayerConfigurationScreen = (props) => {
   console.log(props);
 
   const updatePayerPopup = (payerData) => {
-    console.log(payerData)
+    console.log(payerData);
     setShowEditPayerPopup(true);
     setupdatePayerPopupData(payerData);
   };
 
-  const deletePayer = () => [
+  const columns = useMemo(() => [
+    {
+      Header: 'Payer ID',
+      accessor: 'payerId'
+    },
+    {
+      Header: 'Payer Name',
+      accessor: 'payerName'
+    },
+    {
+      Header: 'Trading Partner ID',
+      accessor: 'tradingPartnerId'
+    },
+    {
+      Header: 'Transaction Types',
+      accessor: 'transactionTypes',
+      disableSortBy: true,
 
-  ]
-
-  const columns = useMemo(
-    () => [
-      {
-        "Header": "Payer ID",
-        "accessor": "payerId",
-      },
-      {
-        "Header": "Payer Name",
-        "accessor": "payerName"
-      },
-      {
-        "Header": "Trading Partner ID",
-        "accessor": "tradingPartnerId"
-      },
-      {
-        "Header": "Transaction Types",
-        "accessor": "transactionTypes",
-        disableSortBy: true,
-
-        Cell: (cellProps) => {
-          return <span>{cellProps.value.join(', ')}</span>
-        }
-      },
-      {
-        "Header": "Is Active",
-        "accessor": "isActive",
-        Cell: ({ cell: { value } }) => (
-          <input type="checkbox" disabled defaultChecked={value} />
-        )
-      },
-      {
-        "Header": "Status",
-        "accessor": "status"
-      },
-      {
-        "Header": "Updated On",
-        "accessor": "updatedOn"
-      },
-      {
-        "Header": "Edit",
-        disableSortBy: true,
-        // cell props has access to row value
-        Cell: (cellProps) => {
-          return <EditIcon onClick={() => updatePayerPopup(cellProps.row.values)} {...cellProps} />
-        }
-      },
-      {
-        "Header": "Delete",
-        disableSortBy: true,
-        // cell props has access to row value
-        Cell: (cellProps) => {
-          return <DeleteIcon onClick={() => props.deletePayer({ payerId: cellProps.row.values.payerId })} />
-        }
+      Cell: (cellProps) => {
+        return <span>{cellProps.value.join(', ')}</span>;
       }
-
-
-    ]
-
-  )
+    },
+    {
+      Header: 'Is Active',
+      accessor: 'isActive',
+      Cell: ({ cell: { value } }) => <input type="checkbox" disabled defaultChecked={value} />
+    },
+    {
+      Header: 'Status',
+      accessor: 'status'
+    },
+    {
+      Header: 'Updated On',
+      accessor: 'updatedOn'
+    },
+    {
+      Header: 'Edit',
+      disableSortBy: true,
+      // cell props has access to row value
+      Cell: (cellProps) => {
+        return <EditIcon onClick={() => updatePayerPopup(cellProps.row.values)} {...cellProps} />;
+      }
+    },
+    {
+      Header: 'Delete',
+      disableSortBy: true,
+      // cell props has access to row value
+      Cell: (cellProps) => {
+        return (
+          <DeleteIcon
+            onClick={() => props.deletePayer({ payerId: cellProps.row.values.payerId })}
+          />
+        );
+      }
+    }
+  ]);
 
   return (
-
     <>
       <Modal
         isOpen={showNewPayerPopup}
@@ -150,12 +140,14 @@ const PayerConfigurationScreen = (props) => {
         style={modalCustomStyles}
         contentLabel="Add New Payer"
         shouldCloseOnOverlayClick={false}
-        ariaHideApp={false}>
+        ariaHideApp={false}
+      >
         <p>
           {' '}
           <button
             style={{ float: 'right', padding: '0.25rem' }}
-            onClick={() => setShowNewPayerPopup(false)}>
+            onClick={() => setShowNewPayerPopup(false)}
+          >
             &times;
           </button>
         </p>
@@ -174,12 +166,14 @@ const PayerConfigurationScreen = (props) => {
         style={modalCustomStyles}
         contentLabel="Edit Payer"
         shouldCloseOnOverlayClick={false}
-        ariaHideApp={false}>
+        ariaHideApp={false}
+      >
         <p>
           {' '}
           <button
             style={{ float: 'right', padding: '0.25rem' }}
-            onClick={() => setShowEditPayerPopup(false)}>
+            onClick={() => setShowEditPayerPopup(false)}
+          >
             &times;
           </button>
         </p>
@@ -195,6 +189,7 @@ const PayerConfigurationScreen = (props) => {
 
       <ItemAddButton onClick={() => setShowNewPayerPopup(true)}>Create Payer</ItemAddButton>
 
+      {/* Here is the old table component created without libraries
       <Styles>
         <table>
           <thead>
@@ -211,10 +206,6 @@ const PayerConfigurationScreen = (props) => {
             </tr>
           </thead>
           <tbody>
-            {/* <PayerRow />
-               <PayerRow />
-               <PayerRow /> */}
-
             {props.payers.map((payer, index) => {
               return (
                 <PayerRow
@@ -227,10 +218,13 @@ const PayerConfigurationScreen = (props) => {
             })}
           </tbody>
         </table>
-      </Styles>
+      </Styles> */}
 
-      <ReusableTable columns={columns} data={props.payers} initialState={{ sortBy: [{ id: 'payerId', desc: false }] }} />
-
+      <ReusableTable
+        columns={columns}
+        data={props.payers}
+        initialState={{ sortBy: [{ id: 'payerId', desc: false }] }}
+      />
     </>
   );
 };

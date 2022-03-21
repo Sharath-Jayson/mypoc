@@ -4,7 +4,6 @@ import PayerStatusPage from './pages/PayerStatus';
 import PayerConfigurationPage from './pages/PayerConfiguration';
 import 'reactjs-popup/dist/index.css';
 
-
 function App() {
   return (
     <Router>

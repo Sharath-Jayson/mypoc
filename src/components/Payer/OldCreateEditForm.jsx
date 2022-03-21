@@ -119,7 +119,8 @@ const CreateEditForm = (props) => {
           if (props.onSubmit) {
             props.onSubmit();
           }
-        }}>
+        }}
+      >
         <PayerItem>
           <label>Payer ID</label>
           <input
@@ -160,7 +161,8 @@ const CreateEditForm = (props) => {
             value={transactionTypes}
             onChange={(e) => {
               handleSelect(e.target.selectedOptions);
-            }}>
+            }}
+          >
             <option value="pac">PAC</option>
             <option value="mac">MAC</option>
             <option value="elig">ELIG</option>

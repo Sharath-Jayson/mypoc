@@ -68,7 +68,6 @@ const ButtonGroup = styled.div`
   display: flex;
 `;
 
-
 // mui tabpanel
 const TabPanel = (props) => {
   const { children, value, index, ...other } = props;
@@ -88,7 +87,7 @@ const TabPanel = (props) => {
       )}
     </div>
   );
-}
+};
 
 const PayerStatus = (props) => {
   const activePayer = 'ACTIVE_PAYER';
@@ -96,11 +95,11 @@ const PayerStatus = (props) => {
 
   const [active, setActive] = useState(activePayer);
 
-  const [activeIndex, setActiveIndex] = useState(0)
+  const [activeIndex, setActiveIndex] = useState(0);
 
   const handleChangeTab = (event, newValue) => {
     setActiveIndex(newValue);
-  }
+  };
 
   console.log(props);
 
@@ -109,24 +108,25 @@ const PayerStatus = (props) => {
 
   const columns = useMemo(() => [
     {
-      "Header": "Payer ID",
-      "accessor": "payerId"
+      Header: 'Payer ID',
+      accessor: 'payerId'
     },
     {
-      "Header": "Payer Name",
-      "accessor": "payerName"
+      Header: 'Payer Name',
+      accessor: 'payerName'
     },
     {
-      "Header": "Trading Partner ID",
-      "accessor": "tradingPartnerId"
+      Header: 'Trading Partner ID',
+      accessor: 'tradingPartnerId'
     }
-  ])
+  ]);
 
   console.log(activeData, inactiveData);
 
   return (
     <NavbarSidebar>
       <PageContainer>
+        {/* CReated using react tabs
         <ButtonGroup>
           <MyTab active={active == activePayer} onClick={() => setActive(activePayer)}>
             Active Payer
@@ -184,28 +184,36 @@ const PayerStatus = (props) => {
               </table>
             </StyledTable>
           </>
-        )}
-
-        <br />
+        )} */}
 
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-          <Tabs value={activeIndex} onChange={handleChangeTab} textColor="secondary"
-            indicatorColor="secondary" variant="fullWidth"
+          <Tabs
+            value={activeIndex}
+            onChange={handleChangeTab}
+            textColor="secondary"
+            indicatorColor="secondary"
+            variant="fullWidth"
           >
             <Tab label="Active Payer" />
             <Tab label="Inactive Payer" />
           </Tabs>
         </Box>
         <TabPanel value={activeIndex} index={0}>
-          <ReusableTable columns={columns} data={activeData} initialState={{ sortBy: [{ id: 'payerId', desc: false }] }} />
+          <ReusableTable
+            columns={columns}
+            data={activeData}
+            initialState={{ sortBy: [{ id: 'payerId', desc: false }] }}
+          />
         </TabPanel>
         <TabPanel value={activeIndex} index={1}>
-          <ReusableTable columns={columns} data={inactiveData} initialState={{ sortBy: [{ id: 'payerId', desc: false }] }} />
+          <ReusableTable
+            columns={columns}
+            data={inactiveData}
+            initialState={{ sortBy: [{ id: 'payerId', desc: false }] }}
+          />
         </TabPanel>
-
-
       </PageContainer>
-    </NavbarSidebar >
+    </NavbarSidebar>
   );
 };
 
