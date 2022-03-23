@@ -4,7 +4,6 @@ import { DeleteOutline } from '@material-ui/icons';
 
 const PayerRow = (props) => {
   return (
-    // this the old payer row compoenent data 
     <tr>
       <td>{props.data.payerId}</td>
       <td>{props.data.payerName}</td>

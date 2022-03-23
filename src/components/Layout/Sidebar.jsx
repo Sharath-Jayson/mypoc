@@ -60,10 +60,22 @@ const Sidebar = () => {
                 Payer Configuration
               </SidebarListItem>
             </Link>
+            <Link to="/payer-configuration-mui" className="link">
+              <SidebarListItem>
+                <MyPayerListIcon size="20" />
+                Payer Configuration MUI
+              </SidebarListItem>
+            </Link>
             <Link to="/payer-status" className="link">
               <SidebarListItem active={window.location.pathname === '/payer-status'}>
                 <MyPayerConfigIcon size="20" />
                 Payer Status
+              </SidebarListItem>
+            </Link>
+            <Link to="/payer-status-mui" className="link">
+              <SidebarListItem>
+                <MyPayerConfigIcon size="20" />
+                Payer Status MUI
               </SidebarListItem>
             </Link>
           </SidebarList>

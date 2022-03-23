@@ -1,18 +1,14 @@
 import React, { useState, useMemo } from 'react';
+import PaymentConfigurationScreen from '../screens/PaymentConfiguration';
 import styled from 'styled-components';
-import PayerRow from '../components/Payer/PayerRow';
-import { connect } from 'react-redux';
-import { deletePayerConfig, createPayerConfig, updatePayerConfig } from '../reducers/PayerSlice';
-import CreateEditForm from '../components/Payer/OldCreateEditForm';
 import { ItemAddButton } from '../styles/styled-elements';
-// import Modal from "../components/Modal"
-// import Popup from 'reactjs-popup';
-import Modal from 'react-modal';
-import ReusableTable from '../components/ReusableTable';
-// import { EditOutline } from '@styled-icons/evaicons-outline/EditOutline';
-// import { DeleteOutline } from '@material-ui/icons';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { deletePayerConfig, createPayerConfig, updatePayerConfig } from '../reducers/PayerSlice';
+import CreateEditForm from '../components/Payer/CreateEditForm';
+import ReusableTable from '../components/ReusableTable';
+import Modal from 'react-modal';
+import { connect } from 'react-redux';
 
 const modalCustomStyles = {
   content: {
@@ -26,56 +22,20 @@ const modalCustomStyles = {
   }
 };
 
-const Styles = styled.table`
-  padding: 1rem;
-
-  table {
-    border-spacing: 0;
-    border: 1px solid black;
-
-    tr {
-      :last-child {
-        td {
-          border-bottom: 0;
-        }
-      }
-      tr:nth-child(even) {
-        background-color: #f2f2f2;
-      }
-    th {
-      background-color: #59bfff;
-    }
-
-    th,
-    td {
-      margin: 0;
-      padding: 0.5rem;
-      border-bottom: 1px solid black;
-      border-right: 1px solid black;
-
-      :last-child {
-        border-right: 0;
-      }
-    }
-  }
+const MainContent = styled.div`
+  margin-top: 2rem;
 `;
 
-const PayerConfigurationScreen = (props) => {
+const PayerConfigurationPage = (props) => {
   const [showNewPayerPopup, setShowNewPayerPopup] = useState(false);
   const [showEditPayerPopup, setShowEditPayerPopup] = useState(false);
   const [updatePayerPopupData, setupdatePayerPopupData] = useState({});
-
-  // const [tableData, setTableData] = useState(props.payers)
-
-  console.log(props);
 
   const updatePayerPopup = (payerData) => {
     console.log(payerData);
     setShowEditPayerPopup(true);
     setupdatePayerPopupData(payerData);
   };
-
-  const deletePayer = () => [];
 
   const columns = useMemo(() => [
     {
@@ -133,9 +93,8 @@ const PayerConfigurationScreen = (props) => {
       }
     }
   ]);
-
   return (
-    <>
+    <MainContent>
       <Modal
         isOpen={showNewPayerPopup}
         onRequestClose={() => setShowNewPayerPopup(false)}
@@ -193,14 +152,12 @@ const PayerConfigurationScreen = (props) => {
 
       <ItemAddButton onClick={() => setShowNewPayerPopup(true)}>Create Payer</ItemAddButton>
 
-      <Styles>
-        <ReusableTable
-          columns={columns}
-          data={props.payers}
-          initialState={{ sortBy: [{ id: 'payerId', desc: false }] }}
-        />
-      </Styles>
-    </>
+      <ReusableTable
+        columns={columns}
+        data={props.payers}
+        initialState={{ sortBy: [{ id: 'payerId', desc: false }] }}
+      />
+    </MainContent>
   );
 };
 
@@ -224,5 +181,4 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-// export default PayerConfigurationLayout;
-export default connect(mapStateToProps, mapDispatchToProps)(PayerConfigurationScreen);
+export default connect(mapStateToProps, mapDispatchToProps)(PayerConfigurationPage);

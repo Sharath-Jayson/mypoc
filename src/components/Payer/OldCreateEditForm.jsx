@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { TheList } from '../../styles/styled-elements';
 import styled from 'styled-components';
+import { Formik, Form, Field, ErrorMessage, useFormik, FormikProvider } from 'formik';
+import * as Yup from 'yup';
 
 const PayerForm = styled.form`
   display: flex;
@@ -49,6 +51,12 @@ const PayerCheckBox = styled.div`
     color: #555;
   }
 `;
+const ButtonRow = styled.div`
+  display: flex;
+  width: 90%;
+  justify-content: flex-end;
+  margin: auto;
+`
 const PayerCreateButton = styled.button`
   width: 150px;
   border: none;
@@ -60,24 +68,77 @@ const PayerCreateButton = styled.button`
   margin-top: 40px;
   cursor: pointer;
 `;
+const PayerCancelButton = styled.button`
+  width: 150px;
+  border: none;
+  background-color: #b30000;
+  color: white;
+  padding: 7px 10px;
+  font-weight: 600;
+  border-radius: 10px;
+  margin-top: 40px;
+  margin-left: 16px;
+  cursor: pointer;
+`;
+
+const PayerSchema = Yup.object().shape({
+  payerId: Yup.string()
+    .matches(/\w$/, 'Must be Digits and Alphabets only')
+    .min(5, 'Must be exactly 5 digits')
+    .max(5, 'Must be exactly 5 digits')
+    .required('Mandatory Field'),
+  payerName: Yup.string().required('Mandatory Field'),
+  tradingPartnerId: Yup.string()
+    .matches(/\w$/, 'Must be Digits and Alphabets only')
+    .min(5, 'Must be exactly 5 digits')
+    .max(5, 'Must be exactly 5 digits')
+});
 
 const CreateEditForm = (props) => {
-  const [payerId, setPayerId] = useState(props.data.payerId || '');
-  const [payerName, setPayerName] = useState(props.data.payerName || '');
-  const [tradingPartnerId, setTradingPartnerId] = useState(props.data.tradingPartnerId || '');
   const [transactionTypes, setTransactionTypes] = useState(props.data.transactionTypes || []);
   const [isActive, setIsActive] = useState(
     props.data.isActive === undefined ? true : props.data.active
   );
   const [status, setStatus] = useState(props.data.status || 'dark');
 
-  const resetData = () => {
-    setPayerId('');
-    setPayerName('');
-    setTradingPartnerId('');
-    setTransactionTypes([]);
-    setIsActive(true);
-  };
+  const formik = useFormik({
+    initialValues: {
+      payerId: props.data.payerId || '',
+      payerName: props.data.payerName || '',
+      tradingPartnerId: props.data.tradingPartnerId || '',
+      transactionTypes: props.data.transactionTypes || [],
+      isActive: props.data.isActive === undefined ? true : props.data.active,
+      status: props.data.status || 'dark'
+    },
+    validationSchema: PayerSchema,
+    onSubmit: (values, { resetForm }) => {
+      if (props.mode == 'CREATE') {
+        props.addPayer({
+          payerId: values.payerId,
+          payerName: values.payerName,
+          tradingPartnerId: values.tradingPartnerId,
+          transactionTypes: values.transactionTypes,
+          isActive: values.isActive,
+          status: values.status
+        });
+        resetForm();
+      }
+
+      if (props.mode == 'UPDATE') {
+        props.updatePayer({
+          payerId: values.payerId,
+          payerName: values.payerName,
+          tradingPartnerId: values.tradingPartnerId,
+          transactionTypes: values.transactionTypes,
+          isActive: values.isActive,
+          status: values.status
+        });
+      }
+      if (props.onSubmit) {
+        props.onSubmit();
+      }
+    }
+  });
 
   const handleSelect = function (selectedItems) {
     const selectedOptions = [];
@@ -87,68 +148,66 @@ const CreateEditForm = (props) => {
     setTransactionTypes(selectedOptions);
   };
 
+  console.log(formik.errors, formik.values);
+
   return (
     <TheList>
       <h1>{props.formTitle}</h1>
-      <PayerForm
-        onSubmit={(e) => {
-          e.preventDefault();
+      <FormikProvider value={formik}>
+        <PayerForm onSubmit={formik.handleSubmit}>
+          <PayerItem>
+            <label>Payer ID</label>
+            <input
+              type="text"
+              placeholder="john"
+              // value={payerId}
+              // onChange={(e) => setPayerId(e.target.value)}
+              name="payerId"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values.payerId}
+            />
+            {/* <ErrorMessage name="payerId" /> */}
+            {formik.errors.payerId ? <div>{formik.errors.payerId}</div> : null}
+          </PayerItem>
+          <PayerItem>
+            <label>Payer Name</label>
+            <input
+              type="text"
+              placeholder="John Smith"
+              name="payerName"
+              // value={payerName}
+              // onChange={(e) => setPayerName(e.target.value)}
+              onBlur={formik.handleBlur}
+              onChange={formik.handleChange}
+              value={formik.values.payerName}
+            />
+            {formik.errors.payerName ? <div>{formik.errors.payerName}</div> : null}
+          </PayerItem>
 
-          if (props.mode == 'CREATE') {
-            props.addPayer({
-              payerId,
-              payerName,
-              tradingPartnerId,
-              transactionTypes,
-              isActive,
-              status
-            });
-            resetData();
-          }
-
-          if (props.mode == 'UPDATE') {
-            props.updatePayer({
-              payerId,
-              payerName,
-              tradingPartnerId,
-              transactionTypes,
-              isActive,
-              status
-            });
-          }
-          if (props.onSubmit) {
-            props.onSubmit();
-          }
-        }}
-      >
-        <PayerItem>
-          <label>Payer ID</label>
-          <input
-            type="text"
-            placeholder="john"
-            value={payerId}
-            onChange={(e) => setPayerId(e.target.value)}
-          />
-        </PayerItem>
-        <PayerItem>
-          <label>Payer Name</label>
-          <input
-            type="text"
-            placeholder="John Smith"
-            value={payerName}
-            onChange={(e) => setPayerName(e.target.value)}
-          />
-        </PayerItem>
-        <PayerItem>
-          <label>Trading Partner ID</label>
-          <input
-            type="text"
-            placeholder="ISDHdhd"
-            value={tradingPartnerId}
-            onChange={(e) => setTradingPartnerId(e.target.value)}
-          />
-        </PayerItem>
-        <PayerItem>
+          <PayerItem>
+            <label>Trading Partner ID</label>
+            <input
+              type="text"
+              placeholder="ISDHdhd"
+              // value={tradingPartnerId}
+              // onChange={(e) => setTradingPartnerId(e.target.value)}
+              name="tradingPartnerId"
+              onBlur={formik.handleBlur}
+              onChange={formik.handleChange}
+              value={formik.values.tradingPartnerId}
+            />
+            {formik.errors.tradingPartnerId ? <div>{formik.errors.tradingPartnerId}</div> : null}
+          </PayerItem>
+          <PayerItem>
+            <label>Transaction Types</label>
+            <Field as="select" name="transactionTypes" multiple>
+              <option value="PAC">PAC</option>
+              <option value="MAC">MAC</option>
+              <option value="ELIG">ELIG</option>
+            </Field>
+          </PayerItem>
+          {/* <PayerItem>
           <label>Transaction Types</label>
 
           <select
@@ -167,26 +226,26 @@ const CreateEditForm = (props) => {
             <option value="mac">MAC</option>
             <option value="elig">ELIG</option>
           </select>
-        </PayerItem>
-        <PayerItem>
-          <label htmlFor="active"> Is Active</label>
-          <PayerCheckBox>
-            <input
-              type="checkbox"
-              name="status"
-              checked={isActive}
-              onClick={() => {
-                setIsActive(!isActive);
-              }}
-              readOnly
-            />
-          </PayerCheckBox>
-        </PayerItem>
+        </PayerItem> */}
+          <PayerItem>
+            <label htmlFor="active"> Is Active</label>
+            <PayerCheckBox>
+              <input
+                type="checkbox"
+                name="isActive"
+                checked={formik.values.isActive}
+                onClick={() => {
+                  formik.setFieldValue('isActive', !formik.values.isActive);
+                }}
+              />
+            </PayerCheckBox>
+          </PayerItem>
 
-        <PayerItem>
-          <label>Status</label>
-          <PayerRadioButton>
-            <input
+          <PayerItem>
+            <label>Status</label>
+            <PayerRadioButton>
+              <Field type="radio" name="status" value="dark" />
+              {/* <input
               type="radio"
               name="status"
               id="dark"
@@ -195,9 +254,11 @@ const CreateEditForm = (props) => {
               onChange={() => {
                 setStatus('dark');
               }}
-            />
-            <label htmlFor="Dark">Dark</label>
-            <input
+            /> */}
+              <label htmlFor="Dark">Dark</label>
+              <Field type="radio" name="status" value="live" />
+
+              {/* <input
               type="radio"
               name="status"
               id="live"
@@ -206,25 +267,20 @@ const CreateEditForm = (props) => {
               onChange={() => {
                 setStatus('live');
               }}
-            />
-            <label htmlFor="live">Live</label>
-          </PayerRadioButton>
-        </PayerItem>
+            /> */}
+              <label htmlFor="live">Live</label>
+            </PayerRadioButton>
+          </PayerItem>
 
-        {/* <PayerItem>
-          <PayerCheckBox>
-            <label htmlFor="active"> Status</label>
-            <input type="checkbox" id="active" name="status" value="active" />
-          </PayerCheckBox>
-        </PayerItem> */}
-        <div>
-          <PayerCreateButton type="submit">
-            {props.mode === 'CREATE' && 'Create'}
-            {props.mode === 'UPDATE' && 'Update'}
-          </PayerCreateButton>
-          <PayerCreateButton>Cancel</PayerCreateButton>
-        </div>
-      </PayerForm>
+          <ButtonRow>
+            <PayerCreateButton type="submit">
+              {props.mode === 'CREATE' && 'Create'}
+              {props.mode === 'UPDATE' && 'Update'}
+            </PayerCreateButton>
+            <PayerCancelButton>Cancel</PayerCancelButton>
+          </ButtonRow>
+        </PayerForm>
+      </FormikProvider>
     </TheList>
   );
 };

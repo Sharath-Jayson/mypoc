@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { TheList } from '../../styles/styled-elements';
 import styled from 'styled-components';
 import TextField from '@material-ui/core/TextField';
+import Grid from '@material-ui/core/Grid';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
@@ -13,11 +14,14 @@ import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
 import OutlinedInput from '@mui/material/OutlinedInput';
+import Slider from '@material-ui/core/Slider';
+import { Input } from '@material-ui/core';
 import Box from '@mui/material/Box';
 import PropTypes from 'prop-types';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 
+// https://mui.com/components/selects/#multiple-select
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
 const MenuProps = {
@@ -50,31 +54,27 @@ const CreateEditForm = (props) => {
   };
 
   const validate = () => {
-    let result = {}
+    let result = {};
 
     // validate payerId
     if (payerId.length != 5 || !payerId.match(/\w$/)) {
-      result['payerId'] = 'Please Enter a Valid PayerID'
-
+      result['payerId'] = 'Please Enter a Valid PayerID';
     }
     if (!payerName) {
-      result['payerName'] = 'This is a required field.'
+      result['payerName'] = 'This is a required field.';
     }
 
-    // tradingPartnerId is optional 
+    // tradingPartnerId is optional
     if (tradingPartnerId) {
       if (!tradingPartnerId.match(/\w$/)) {
-        result['tradingPartnerId'] = "Enter a Valid Trading PartnerID"
-
+        result['tradingPartnerId'] = 'Enter a Valid Trading PartnerID';
       }
-
     }
 
-    setErrors(result)
-
+    setErrors(result);
 
     return result;
-  }
+  };
 
   return (
     <>
@@ -93,12 +93,12 @@ const CreateEditForm = (props) => {
         onSubmit={(e) => {
           e.preventDefault();
 
-          let validations = validate()
+          let validations = validate();
 
           // if length is greater than 0 it means there are errors
           if (Object.keys(validations).length > 0) {
             // means there are errors so short circuit the function
-            return
+            return;
           }
 
           if (props.mode == 'CREATE') {
@@ -168,7 +168,7 @@ const CreateEditForm = (props) => {
         </FormGroup>
 
         <FormGroup row>
-          <FormControl style={{ width: "33.3%" }}>
+          <FormControl style={{ width: '33.3%' }}>
             <InputLabel>Transaction Types (Multiple)</InputLabel>
             <Select
               labelId="demo-multiple-name-label"
@@ -188,7 +188,7 @@ const CreateEditForm = (props) => {
             </Select>
           </FormControl>
 
-          <FormControl component="fieldset" variant="standard" style={{ width: "33.3%" }}>
+          <FormControl component="fieldset" variant="standard" style={{ width: '33.3%' }}>
             <FormLabel component="legend">Active</FormLabel>
             <FormControlLabel
               control={<Checkbox checked={isActive} onChange={() => setIsActive(!isActive)} />}
@@ -196,8 +196,7 @@ const CreateEditForm = (props) => {
             />
           </FormControl>
 
-
-          <FormControl style={{ width: "33.3%" }}>
+          <FormControl style={{ width: '33.3%' }}>
             <FormLabel>Status</FormLabel>
             <RadioGroup
               value={status}
@@ -211,15 +210,15 @@ const CreateEditForm = (props) => {
           </FormControl>
         </FormGroup>
 
-        <Stack direction="row" spacing={2} justifyContent={"right"}>
-          <Button variant="contained" color="error">Cancel</Button>
-          <Button variant="contained">
-
+        <Stack direction="row" spacing={2} justifyContent="right">
+          <Button variant="contained" color="error" onClick={props.closeModal}>
+            Cancel
+          </Button>
+          <Button variant="contained" type="submit">
             {props.mode === 'CREATE' && 'Create'}
             {props.mode === 'UPDATE' && 'Update'}
           </Button>
         </Stack>
-
       </Box>
     </>
   );

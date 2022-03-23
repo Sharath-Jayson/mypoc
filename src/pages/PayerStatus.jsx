@@ -8,11 +8,6 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import ReusableTable from '../components/ReusableTable';
 
-const PageContainer = styled.div`
-    flex: 4;
-    padding left : 1rem;
-`;
-
 const StyledTable = styled.table`
   padding: 1rem;
 
@@ -95,125 +90,72 @@ const PayerStatus = (props) => {
 
   const [active, setActive] = useState(activePayer);
 
-  const [activeIndex, setActiveIndex] = useState(0);
-
-  const handleChangeTab = (event, newValue) => {
-    setActiveIndex(newValue);
-  };
-
   console.log(props);
 
   const activeData = props.payers.filter((p) => p.isActive);
   const inactiveData = props.payers.filter((p) => p.isActive === false);
 
-  const columns = useMemo(() => [
-    {
-      Header: 'Payer ID',
-      accessor: 'payerId'
-    },
-    {
-      Header: 'Payer Name',
-      accessor: 'payerName'
-    },
-    {
-      Header: 'Trading Partner ID',
-      accessor: 'tradingPartnerId'
-    }
-  ]);
-
-  console.log(activeData, inactiveData);
-
   return (
-    <NavbarSidebar>
-      <PageContainer>
-        {/* CReated using react tabs
-        <ButtonGroup>
-          <MyTab active={active == activePayer} onClick={() => setActive(activePayer)}>
-            Active Payer
-          </MyTab>
-          <MyTab active={active == inactivePayer} onClick={() => setActive(inactivePayer)}>
-            Inactive Payer
-          </MyTab>
-        </ButtonGroup>
+    <>
+      <ButtonGroup>
+        <MyTab active={active == activePayer} onClick={() => setActive(activePayer)}>
+          Active Payer
+        </MyTab>
+        <MyTab active={active == inactivePayer} onClick={() => setActive(inactivePayer)}>
+          Inactive Payer
+        </MyTab>
+      </ButtonGroup>
 
-        {active === activePayer && (
-          <>
-            <StyledTable>
-              <table>
-                <thead>
-                  <tr>
-                    <th>Payer ID</th>
-                    <th>Payer Name</th>
-                    <th>Trading Partner Id</th>
+      {active === activePayer && (
+        <>
+          <StyledTable>
+            <table>
+              <thead>
+                <tr>
+                  <th>Payer ID</th>
+                  <th>Payer Name</th>
+                  <th>Trading Partner Id</th>
+                </tr>
+              </thead>
+              <tbody>
+                {activeData.map((payer, i) => (
+                  <tr key={i}>
+                    <td>{payer.payerId}</td>
+                    <td>{payer.payerName}</td>
+                    <td>{payer.tradingPartnerId}</td>
                   </tr>
-                </thead>
-                <tbody>
-                  {activeData.map((payer, i) => (
-                    <tr key={i}>
-                      <td>{payer.payerId}</td>
-                      <td>{payer.payerName}</td>
-                      <td>{payer.tradingPartnerId}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </StyledTable>
-          </>
-        )}
+                ))}
+              </tbody>
+            </table>
+          </StyledTable>
+        </>
+      )}
 
-        {active === inactivePayer && (
-          <>
-            <StyledTable>
-              <table>
-                <thead>
-                  <tr>
-                    <th>Payer ID</th>
-                    <th>Payer Name</th>
-                    <th>Trading Partner Id</th>
+      {active === inactivePayer && (
+        <>
+          <StyledTable>
+            <table>
+              <thead>
+                <tr>
+                  <th>Payer ID</th>
+                  <th>Payer Name</th>
+                  <th>Trading Partner Id</th>
+                </tr>
+              </thead>
+              <tbody>
+                {inactiveData.map((payer, i) => (
+                  <tr key={i}>
+                    <td>{payer.payerId}</td>
+                    <td>{payer.payerName}</td>
+                    <td>{payer.tradingPartnerId}</td>
                   </tr>
-                </thead>
-                <tbody>
-                  {inactiveData.map((payer, i) => (
-                    <tr key={i}>
-                      <td>{payer.payerId}</td>
-                      <td>{payer.payerName}</td>
-                      <td>{payer.tradingPartnerId}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </StyledTable>
-          </>
-        )} */}
-
-        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-          <Tabs
-            value={activeIndex}
-            onChange={handleChangeTab}
-            textColor="secondary"
-            indicatorColor="secondary"
-            variant="fullWidth"
-          >
-            <Tab label="Active Payer" />
-            <Tab label="Inactive Payer" />
-          </Tabs>
-        </Box>
-        <TabPanel value={activeIndex} index={0}>
-          <ReusableTable
-            columns={columns}
-            data={activeData}
-            initialState={{ sortBy: [{ id: 'payerId', desc: false }] }}
-          />
-        </TabPanel>
-        <TabPanel value={activeIndex} index={1}>
-          <ReusableTable
-            columns={columns}
-            data={inactiveData}
-            initialState={{ sortBy: [{ id: 'payerId', desc: false }] }}
-          />
-        </TabPanel>
-      </PageContainer>
-    </NavbarSidebar>
+                ))}
+              </tbody>
+            </table>
+          </StyledTable>
+        </>
+      )}
+    </>
   );
 };
 

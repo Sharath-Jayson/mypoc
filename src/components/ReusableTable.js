@@ -37,8 +37,7 @@ const ReuseableTable = ({ columns, data, initialState }) => {
                 <TableCell
                   key={j}
                   {...column.getHeaderProps(column.getSortByToggleProps())}
-                  sortDirection={column.isSorted ? (column.isSortedDesc ? 'desc' : 'asc') : false}
-                >
+                  sortDirection={column.isSorted ? (column.isSortedDesc ? 'desc' : 'asc') : false}>
                   {column.render('Header')}
 
                   <TableSortLabel

@@ -61,6 +61,12 @@ function Sidebar() {
                 Payer Status
               </SidebarListItem>
             </Link>
+            <Link to="/payer-status-mui" className="link">
+              <SidebarListItem>
+                <MyPayerConfigIcon size="20" />
+                Payer Status MUI
+              </SidebarListItem>
+            </Link>
           </SidebarList>
         </SidebarMenu>
       </SidebarWrapper>
