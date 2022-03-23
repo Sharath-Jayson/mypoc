@@ -51,12 +51,6 @@ const PayerCheckBox = styled.div`
     color: #555;
   }
 `;
-const ButtonRow = styled.div`
-  display: flex;
-  width: 90%;
-  justify-content: flex-end;
-  margin: auto;
-`
 const PayerCreateButton = styled.button`
   width: 150px;
   border: none;
@@ -68,6 +62,7 @@ const PayerCreateButton = styled.button`
   margin-top: 40px;
   cursor: pointer;
 `;
+
 const PayerCancelButton = styled.button`
   width: 150px;
   border: none;
@@ -80,6 +75,10 @@ const PayerCancelButton = styled.button`
   margin-left: 16px;
   cursor: pointer;
 `;
+
+const ErrorText = styled.div`
+  color: red;
+`
 
 const PayerSchema = Yup.object().shape({
   payerId: Yup.string()
@@ -140,13 +139,13 @@ const CreateEditForm = (props) => {
     }
   });
 
-  const handleSelect = function (selectedItems) {
-    const selectedOptions = [];
-    for (let i = 0; i < selectedItems.length; i++) {
-      selectedOptions.push(selectedItems[i].value);
-    }
-    setTransactionTypes(selectedOptions);
-  };
+  {/*const handleSelect = function (selectedItems) {
+  //   const selectedOptions = [];
+  //   for (let i = 0; i < selectedItems.length; i++) {
+  //     selectedOptions.push(selectedItems[i].value);
+  //   }
+  //   setTransactionTypes(selectedOptions);
+   }; */}
 
   console.log(formik.errors, formik.values);
 
@@ -168,7 +167,7 @@ const CreateEditForm = (props) => {
               value={formik.values.payerId}
             />
             {/* <ErrorMessage name="payerId" /> */}
-            {formik.errors.payerId ? <div>{formik.errors.payerId}</div> : null}
+            {formik.errors.payerId ? <ErrorText>{formik.errors.payerId}</ErrorText> : null}
           </PayerItem>
           <PayerItem>
             <label>Payer Name</label>
@@ -182,7 +181,7 @@ const CreateEditForm = (props) => {
               onChange={formik.handleChange}
               value={formik.values.payerName}
             />
-            {formik.errors.payerName ? <div>{formik.errors.payerName}</div> : null}
+            {formik.errors.payerName ? <ErrorText>{formik.errors.payerName}</ErrorText> : null}
           </PayerItem>
 
           <PayerItem>
@@ -197,7 +196,7 @@ const CreateEditForm = (props) => {
               onChange={formik.handleChange}
               value={formik.values.tradingPartnerId}
             />
-            {formik.errors.tradingPartnerId ? <div>{formik.errors.tradingPartnerId}</div> : null}
+            {formik.errors.tradingPartnerId ? <ErrorText>{formik.errors.tradingPartnerId}</ErrorText> : null}
           </PayerItem>
           <PayerItem>
             <label>Transaction Types</label>
@@ -272,13 +271,13 @@ const CreateEditForm = (props) => {
             </PayerRadioButton>
           </PayerItem>
 
-          <ButtonRow>
+          <div>
             <PayerCreateButton type="submit">
               {props.mode === 'CREATE' && 'Create'}
               {props.mode === 'UPDATE' && 'Update'}
             </PayerCreateButton>
             <PayerCancelButton>Cancel</PayerCancelButton>
-          </ButtonRow>
+          </div>
         </PayerForm>
       </FormikProvider>
     </TheList>
